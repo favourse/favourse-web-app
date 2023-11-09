@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import HeaderSection from "../component/HeaderSection";
 import { Helmet } from "react-helmet";
 const HomePage = () => {

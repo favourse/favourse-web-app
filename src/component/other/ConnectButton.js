@@ -1,15 +1,14 @@
-import WalletConnectProvider from "@web3-react/walletconnect";
+// import WalletConnectProvider from "@web3-react/walletconnect";
 import { useState } from "react";
-import Web3Modal from "web3modal";
+// import Web3Modal from "web3modal";
 import { truncateFromMiddle } from "../../utils/utils";
+// import AuthService from "../../auth/AuthService";
 
 // import { ethers } from "ethers";
 const ethers = require("ethers");
 // const BigNumber = require("ethers");
 
 function ConnectButton() {
-  const [connected, setConnected] = useState(false);
-  const [connectedAccnt, setConAcnt] = useState("");
   const [data, setdata] = useState({
     address: "",
     Balance: null,
@@ -128,7 +127,7 @@ function ConnectButton() {
       //   </div>
       <div className="hidden lg:flex items-center lg:flex-1 lg:justify-end">
         <a
-          onClick={btnhandler}
+          onClick={this.handleLogin}
           className="z-20 text-sm flex text-white  duration-200 hover:shadow-lg shadow-white bg-violet-600/[.6] hover:bg-violet-600 rounded-lg px-4 py-2 items-center flex-row font-semibold leading-6 "
         >
           Connect

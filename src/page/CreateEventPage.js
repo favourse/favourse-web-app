@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import { useNavigate } from "react-router-dom";
+import * as AuthService from "../auth/AuthService";
+
 import axios from "axios";
 
 import {
@@ -13,76 +15,9 @@ import { API_URL, validateFormData } from "../utils";
 
 // const ethers = require("ethers");
 const CreateEventPage = () => {
-  // const [currentAccount, setCurrentAccount] = useState("");
-  // const [userAddress, setUserAddress] = useState("");
-
-  // const { ethereum } = window;
-  // const provider = new ethers.providers.Web3Provider(ethereum);
-  // const signer = provider.getSigner();
-  // const detailsOn = async () => {
-  //   // const addr = await signer.getAddress();
-  // };
-  // async function connectMetamask() {
-  //   const res = await provider.send("eth_requestAccounts", []);
-  //   userAddress(res);
-  // }
-
-  // async function myAddress() {
-  //   const addr = await signer.getAddress();
-  //   setUserAddress(addr.toString());
-  // }
-
-  // const checkIfWalletIsConnected = async () => {
-  //   try {
-  //     const { ethereum } = window;
-
-  //     if (!ethereum) {
-  //       console.log("Use Metamask!");
-  //     } else {
-  //       console.log("Ethereum object found", ethereum);
-  //       detailsOn();
-  //     }
-
-  //     const accounts = await ethereum.request({ method: "eth_accounts" });
-
-  //     if (accounts !== 0) {
-  //       const account = accounts[0];
-  //       console.log("Found an authorized account ", account);
-  //       setCurrentAccount(account);
-  //       detailsOn();
-  //     } else {
-  //       console.log("Could not find an authorized account");
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  // const connectWallet = async () => {
-  //   try {
-  //     const { ethereum } = window;
-
-  //     if (!ethereum) {
-  //       alert("Use Metamask!");
-  //     } else {
-  //       const accounts = await ethereum.request({
-  //         method: "eth_requestAccounts",
-  //       });
-  //       console.log("Account connected ", accounts[0]);
-
-  //       setCurrentAccount(accounts[0]);
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   checkIfWalletIsConnected();
-  // }, []);
-
   const [isLoading, setIsLoading] = useState(false);
   const [formErrors, setFormErrors] = useState({});
+  const [user, setUser] = useState(null);
 
   const navigate = useNavigate();
 
@@ -171,60 +106,98 @@ const CreateEventPage = () => {
     // Submit formData to an API or do other processing...
   };
 
+  useEffect(() => {
+    const checkIfAuthenticated = async () => {
+      const isAuthenticated = await AuthService.isAuthenticated();
+      if (isAuthenticated) {
+        const principalId = await AuthService.getPrincipalId();
+        setUser({ principalId });
+      }
+    };
+
+    checkIfAuthenticated();
+  }, []);
+
+  const handleLogin = async () => {
+    console.log("clicked");
+    await AuthService.login(() => {
+      // Perform actions after successful login
+      window.location.reload(); // or use React Router to redirect
+    });
+  };
+
   return (
-    <div className="bg-gradient-to-r from-violet-700 to-violet-900">
+    <div className="h-fit min-h-screen pb-52 bg-gradient-to-r from-violet-900 via-violet-950 to-black">
       <Helmet>
         <title>Create Event | Favourse</title>
       </Helmet>
       <HeaderSection />
+      {user ? (
+        <div className="p-4 md:p-8 lg:w-2/3 mx-auto">
+          <div className="mb-6">
+            <h2 className="text-3xl text-white md:text-4xl font-semibold text-center">
+              Create Event
+            </h2>
+          </div>
+          <div className="space-y-6">
+            {/* Basic Information */}
+            <BasicInformationForm
+              onNameChange={(value) => handleInputChange("name", value)}
+              eventBanner={(value) => handleInputChange("event_banner", value)}
+              onDescriptionChange={(value) =>
+                handleInputChange("description", value)
+              }
+            />
 
-      <div className="p-4 md:p-8 lg:w-2/3 mx-auto">
-        <div className="mb-6">
-          <h2 className="text-3xl text-white md:text-4xl font-semibold text-center">
-            Create Event
-          </h2>
-        </div>
-        <div className="space-y-6">
-          {/* Basic Information */}
-          <BasicInformationForm
-            onNameChange={(value) => handleInputChange("name", value)}
-            eventBanner={(value) => handleInputChange("event_banner", value)}
-            onDescriptionChange={(value) =>
-              handleInputChange("description", value)
-            }
-          />
+            {/* Location, Date and Time */}
+            <LocationDateTimeForm
+              startDateData={(value) => handleInputChange("start_date", value)}
+              startTimeData={(value) => handleInputChange("start_time", value)}
+              endDateData={(value) => handleInputChange("end_date", value)}
+              endTimeData={(value) => handleInputChange("end_time", value)}
+              isToggled={formData.isInPerson}
+              inPersonData={(value) => handleInputChange("isInPerson", value)}
+              locationData={(value) => handleInputChange("location", value)}
+            />
 
-          {/* Location, Date and Time */}
-          <LocationDateTimeForm
-            startDateData={(value) => handleInputChange("start_date", value)}
-            startTimeData={(value) => handleInputChange("start_time", value)}
-            endDateData={(value) => handleInputChange("end_date", value)}
-            endTimeData={(value) => handleInputChange("end_time", value)}
-            isToggled={formData.isInPerson}
-            inPersonData={(value) => handleInputChange("isInPerson", value)}
-            locationData={(value) => handleInputChange("location", value)}
-          />
+            {/* Price and Capacity */}
+            <TicketCapacityForm
+              freeToggle={formData.isFree}
+              errorData={formErrors.name}
+              capacityData={(value) => handleInputChange("capacity", value)}
+              isFreeData={(value) => handleInputChange("isFree", value)}
+              priceData={(value) => handleInputChange("ticket_price", value)}
+            />
 
-          {/* Price and Capacity */}
-          <TicketCapacityForm
-            freeToggle={formData.isFree}
-            errorData={formErrors.name}
-            capacityData={(value) => handleInputChange("capacity", value)}
-            isFreeData={(value) => handleInputChange("isFree", value)}
-            priceData={(value) => handleInputChange("ticket_price", value)}
-          />
-
-          {/* Create Event Button */}
-          <div className="mt-6">
-            <button
-              onClick={handleSubmit}
-              className="w-full bg-primary-color text-lg text-white py-2 px-4 rounded-full"
-            >
-              {isLoading ? "Loading..." : "Create your event"}
-            </button>
+            {/* Create Event Button */}
+            <div className="mt-6">
+              <button
+                onClick={handleSubmit}
+                className="w-full bg-primary-color text-lg text-white py-2 px-4 rounded-full"
+              >
+                {isLoading ? "Loading..." : "Create your event"}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="p-4 md:p-52 md:pt-52 pt-52">
+          <h1 className="text-7xl text-center text-white md:text-9xl font-bold">
+            Upps..
+          </h1>
+          <p></p>
+          <p className="text-center text-md mt-3 font-thin md:text-2xl text-white">
+            Please{" "}
+            <span
+              className="font-normal hover:underline cursor-pointer"
+              onClick={handleLogin}
+            >
+              log in
+            </span>{" "}
+            to access this feature.
+          </p>
+        </div>
+      )}
     </div>
   );
 };

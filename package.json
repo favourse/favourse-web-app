@@ -5,6 +5,7 @@
   "dependencies": {
     "@dfinity/agent": "^0.19.3",
     "@dfinity/auth-client": "^0.19.3",
+    "@dfinity/principal": "^0.19.3",
     "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^2.0.18",
     "@testing-library/jest-dom": "^5.17.0",
