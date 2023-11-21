@@ -21,7 +21,7 @@ const HomePage = () => {
             }}
           />
         </div>
-        <div className="mx-auto max-w-2xl py-32 md:py-24 sm:py-48">
+        <div className="mx-auto max-w-2xl py-32 md:py-48 sm:py-48">
           <div className="text-center">
             <h1 className="text-4xl md:text-7xl font-bold tracking-tight text-white sm:text-6xl">
               Favourse Event Enabler Platform
@@ -43,19 +43,6 @@ const HomePage = () => {
               >
                 Learn more <span aria-hidden="true">→</span>
               </a>
-            </div>
-            <div className="hidden sm:mt-24 sm:flex sm:justify-center">
-              <div className="relative rounded-full px-3 py-1 text-xs leading-6 text-white/90 ring-1 ring-white/10 hover:ring-white/50">
-                Announcing our Token Pre-Sale.{" "}
-                <a
-                  href="https://token.favourse.com"
-                  target="_BLANK"
-                  className="font-semibold text-white"
-                >
-                  <span className="absolute inset-0" aria-hidden="true" />
-                  Read more <span aria-hidden="true">&rarr;</span>
-                </a>
-              </div>
             </div>
           </div>
         </div>

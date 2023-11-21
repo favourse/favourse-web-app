@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Dialog, Disclosure, Popover, Transition } from "@headlessui/react";
+import { Dialog, Popover } from "@headlessui/react";
 import FavLogoWhite from "../assets/Favourse Logo White.png";
 import FavLogo from "../assets/Favourse Logo.png";
 
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import ConnectButton from "./other/ConnectButton";
+// import ConnectButton from "./other/ConnectButton";
 import LoginButton from "./other/LoginButton";
 
 export default function HeaderSection() {

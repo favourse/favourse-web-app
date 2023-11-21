@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import VideoCameraIcon from "../../assets/video-camera-icon.svg";
 
 const LocationDateTimeForm = ({
@@ -10,7 +10,8 @@ const LocationDateTimeForm = ({
   inPersonData,
   locationData,
 }) => {
-  const [timezone, setTimezone] = useState("Asia/Makassar");
+  // const [timezone, setTimezone] = useState("Asia/Makassar");
+  // eslint-disable-next-line no-unused-vars
 
   return (
     <div className="p-4 rounded-md flex text-left flex-col md:flex-col w-full border bg-white">
@@ -64,6 +65,7 @@ const LocationDateTimeForm = ({
               </label>
               <input
                 type="time"
+                // eslint-disable-next-line no-unused-vars
                 onChange={(e) => startTimeData(e.target.value)}
                 className="border border-gray-300 p-2 rounded-lg w-full"
               />
@@ -76,6 +78,7 @@ const LocationDateTimeForm = ({
               </label>
               <input
                 type="date"
+                // eslint-disable-next-line no-unused-vars
                 onChange={(e) => endDateData(e.target.value)}
                 className="border border-gray-300 p-2 rounded-lg w-full"
               />
@@ -86,12 +89,13 @@ const LocationDateTimeForm = ({
               </label>
               <input
                 type="time"
+                // eslint-disable-next-line no-unused-vars
                 onChange={(e) => endTimeData(e.target.value)}
                 className="border border-gray-300 p-2 rounded-lg w-full"
               />
             </div>
           </div>
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Timezone
             </label>
@@ -100,9 +104,8 @@ const LocationDateTimeForm = ({
               className="border border-gray-300 p-2 rounded-lg w-full"
             >
               <option value="Asia/Makassar">Asia/Makassar</option>
-              {/* Add other timezones here */}
             </select>
-          </div>
+          </div> */}
           <div>
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-medium text-gray-700">Location</h2>
@@ -113,6 +116,7 @@ const LocationDateTimeForm = ({
                     type="checkbox"
                     checked={isToggled}
                     // onClick={() => inPersonData(!isToggled)}
+                    // eslint-disable-next-line no-unused-vars
                     onChange={(e) => inPersonData(!isToggled)}
                     className="hidden "
                   />
@@ -131,6 +135,7 @@ const LocationDateTimeForm = ({
             </div>
             <input
               type="text"
+              // eslint-disable-next-line no-unused-vars
               onChange={(e) => locationData(e.target.value)}
               placeholder={
                 isToggled ? "Enter event location" : "Enter virtual event link"

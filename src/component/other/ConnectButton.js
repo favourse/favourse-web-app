@@ -16,17 +16,17 @@ function ConnectButton() {
 
   // Button handler button for handling a
   // request event for metamask
-  const btnhandler = () => {
-    // Asking if metamask is already present or not
-    if (window.ethereum) {
-      // res[0] for fetching a first wallet
-      window.ethereum
-        .request({ method: "eth_requestAccounts" })
-        .then((res) => accountChangeHandler(res[0]));
-    } else {
-      alert("install metamask extension!!");
-    }
-  };
+  // const btnhandler = () => {
+  //   // Asking if metamask is already present or not
+  //   if (window.ethereum) {
+  //     // res[0] for fetching a first wallet
+  //     window.ethereum
+  //       .request({ method: "eth_requestAccounts" })
+  //       .then((res) => accountChangeHandler(res[0]));
+  //   } else {
+  //     alert("install metamask extension!!");
+  //   }
+  // };
 
   // getbalance function for getting a balance in
   // a right format with help of ethers

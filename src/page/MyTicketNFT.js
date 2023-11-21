@@ -1,10 +1,27 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
-
+import { getPrincipalId } from "../auth/AuthService";
 import HeaderSection from "../component/HeaderSection";
 import TicketNFTComponent from "../component/ticket/TicketNFTComponent";
+import ListOfNFTTickets from "../component/ticket/ListOfNFTTickets";
 
 export default function MyTicketNFT() {
+  const [userPrincipalId, setUserPrincipalId] = useState(null);
+
+  useEffect(() => {
+    const fetchPrincipal = async () => {
+      const principalId = await getPrincipalId();
+      if (principalId) {
+        setUserPrincipalId(principalId);
+        // console.log(principalId);
+      } else {
+        console.error("No principal ID found");
+      }
+    };
+
+    fetchPrincipal();
+  }, []);
+
   return (
     <div className="h-fit min-h-screen pb-52 bg-gradient-to-r from-violet-900 via-violet-950 to-black">
       <div
@@ -31,6 +48,7 @@ export default function MyTicketNFT() {
         <div className="w-full md:w-3/5 mt-3 p-4 md:p-10 rounded-sm grid grid-cols-1 md:grid-cols-1 gap-4 justify-center items-center">
           {/* {user ? <div>tes</div> : <TicketNFTComponent principalId={user} />} */}
           <TicketNFTComponent />
+          <ListOfNFTTickets userPrincipal={userPrincipalId} />
         </div>
       </div>
     </div>

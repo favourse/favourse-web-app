@@ -1,27 +1,72 @@
 import React, { useState, useRef } from "react";
+import { initJuno, uploadFile } from "@junobuild/core";
+import preloader from "../../assets/preloader.gif";
 
 function BasicInformationForm({
   onNameChange,
   onDescriptionChange,
   eventBanner,
+  logoType,
 }) {
+  initJuno({
+    satelliteId: "4knjt-tiaaa-aaaal-adenq-cai",
+  });
   const [imagePreview, setImagePreview] = useState(null);
-  var bannerEvent = "";
+  // let bannerEvent = "";
 
   const fileInputRef = useRef(null);
 
-  const handleImageChange = (e) => {
+  // const handleImageChange = (e) => {
+  //   const file = e.target.files[0];
+  //   if (file && file.type.substr(0, 5) === "image") {
+  //     const reader = new FileReader();
+
+  //     reader.onloadend = () => {
+  //       setImagePreview(reader.result);
+  //       // bannerEvent = file.name;
+  //     };
+
+  //     reader.readAsDataURL(file);
+  //     eventBanner(file);
+  //   } else {
+  //     setImagePreview(null);
+  //   }
+  // };
+
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file && file.type.substr(0, 5) === "image") {
+      setImagePreview(preloader);
       const reader = new FileReader();
 
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-        bannerEvent = file.name;
+      reader.readAsDataURL(file);
+      reader.onloadend = async () => {
+        // const dataURL = reader.result;
+        // setImagePreview(reader.result);
+
+        // const buffer = new Uint8Array(reader.result);
+        // Generate a unique key using timestamp and random number
+        const uniqueKey = `image_${Date.now()}_${Math.floor(
+          Math.random() * 1000
+        )}`;
+        try {
+          const assetKey = await uploadFile({
+            collection: "favourse100",
+            key: uniqueKey, // Generate or define a unique key
+            data: file,
+          });
+          console.log("Success upload", assetKey.downloadUrl);
+          setImagePreview(reader.result);
+
+          // Update any other state or formData with the assetKey if necessary
+          eventBanner(assetKey.downloadUrl);
+          logoType(file.type);
+        } catch (error) {
+          console.error("Error uploading image: ", error);
+        }
       };
 
-      reader.readAsDataURL(file);
-      eventBanner(file);
+      // reader.readAsArrayBuffer(file);
     } else {
       setImagePreview(null);
     }
@@ -157,21 +202,13 @@ function BasicInformationForm({
               onChange={(e) => onDescriptionChange(e.target.value)}
               className="border border-gray-300 p-2 rounded-lg w-full"
               placeholder="Write description here."
-              rows="4"
+              rows="8"
             ></textarea>
             <p className="text-xs text-gray-500 mb-2">
               Enter a description for your event.
             </p>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Network
-            </label>
-            <select className="border border-gray-300 p-2 rounded-lg w-full">
-              <option value="ICP Network">ICP Network</option>
-              {/* Add other networks here */}
-            </select>
-          </div>
+
           {/* <div className="text-xs text-gray-600">
             <p className="mb-1">
               You currently do not have any token to pay for gas to deploy on

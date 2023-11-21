@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import { useNavigate } from "react-router-dom";
 import * as AuthService from "../auth/AuthService";
+import { initJuno, setDoc } from "@junobuild/core";
+import FavIcon from "../assets/fav-icon.png";
 
 import axios from "axios";
 
@@ -11,26 +13,55 @@ import {
   TicketCapacityForm,
 } from "../component/event";
 import HeaderSection from "../component/HeaderSection";
-import { API_URL, validateFormData } from "../utils";
+import DeployModal from "../component/event/component/DeployModal";
+// import { API_URL, validateFormData } from "../utils";
 
 // const ethers = require("ethers");
 const CreateEventPage = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [formErrors, setFormErrors] = useState({});
+  initJuno({
+    satelliteId: "4knjt-tiaaa-aaaal-adenq-cai",
+  });
   const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const checkIfAuthenticated = async () => {
+      const isAuthenticated = await AuthService.isAuthenticated();
+      if (isAuthenticated) {
+        const principalUserId = await AuthService.getPrincipalId();
+
+        setUser({ principalUserId });
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          principalId: principalUserId,
+        }));
+      }
+    };
+
+    checkIfAuthenticated();
+  }, []);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSucces] = useState("idle");
+  const [formErrors, setFormErrors] = useState({});
+  // const [user, setUser] = useState(null);
 
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
+    principalId: "",
     name: "",
     description: "",
     isInPerson: true,
     location: "",
     event_banner: "",
-    capacity: 0,
+    logoData: "",
+    logoType: "",
+    maxLimit: 0,
     isFree: false,
-    ticket_price: 0,
+    price: 0,
+    startDateTime: "",
+    endDateTime: "",
   });
+  // const [deploymentResult, setDeploymentResult] = useState("");
 
   const handleInputChange = (field, value) => {
     setFormData((prevData) => {
@@ -40,7 +71,7 @@ const CreateEventPage = () => {
       };
 
       if (field === "isFree" && value) {
-        updatedData.ticket_price = "0"; // set to string "0"
+        updatedData.price = "0"; // set to string "0"
       }
 
       // If start_date or start_time changes, combine them
@@ -50,7 +81,7 @@ const CreateEventPage = () => {
 
         // Only set combined datetime if both date and time are present
         if (combinedStartDate && combinedStartTime) {
-          updatedData.start_datetime = `${combinedStartDate}T${combinedStartTime}`;
+          updatedData.startDateTime = `${combinedStartDate}T${combinedStartTime}`;
         }
       }
 
@@ -61,7 +92,7 @@ const CreateEventPage = () => {
 
         // Only set combined datetime if both date and time are present
         if (combinedEndDate && combinedEndTime) {
-          updatedData.end_datetime = `${combinedEndDate}T${combinedEndTime}`;
+          updatedData.endDateTime = `${combinedEndDate}T${combinedEndTime}`;
         }
       }
 
@@ -74,49 +105,85 @@ const CreateEventPage = () => {
     }));
   };
 
-  const handleSubmit = () => {
-    console.log(formData);
+  // const handleSubmit = () => {
+  //   console.log(formData);
+  //   setIsLoading(true);
+
+  //   // Validate the form data
+  //   const errors = validateFormData(formData);
+
+  //   // Check if there are any validation errors
+  //   if (Object.keys(errors).length > 0) {
+  //     console.log("Validation errors:", errors);
+  //     setIsLoading(false); // Reset the loading state
+  //     return; // Exit the function early since validation failed
+  //   }
+  //   axios
+  //     .post(API_URL + "events", formData)
+  //     // .post(API_URL + "events", formData, {
+  //     //   headers: {
+  //     //     "Content-Type": "multipart/form-data",
+  //     //   },
+  //     // })
+  //     .then((res) => {
+  //       setTimeout(() => {
+  //         navigate("/discover"); // Redirect to the new page after 2 seconds
+  //       }, 3000);
+  //     })
+  //     .catch((error) => {
+  //       setIsLoading(false);
+  //       console.log(error);
+  //     });
+  //   // Submit formData to an API or do other processing...
+  // };
+
+  const handleSubmit = async (e) => {
     setIsLoading(true);
+    setTimeout(() => {
+      setIsSucces("deploying");
+    }, 1000);
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        "http://localhost:3040/deploy",
+        formData
+      );
+      const dataToStore = {
+        principalId: response.data.principalId,
+        canisterId: response.data.canisterId, // Make sure these fields are returned from the backend
+        canisterName: response.data.canisterName,
+        logoType: response.data.logoType,
+        logoData: response.data.logoData,
+        name: formData.name,
+        symbol: response.data.symbol,
+        maxLimit: formData.maxLimit,
+        location: formData.location,
+        startDateTime: formData.startDateTime,
+        endDateData: formData.endDateTime,
+        isInPerson: formData.isInPerson,
+        isFree: formData.isFree,
+        price: formData.price,
+      };
 
-    // Validate the form data
-    const errors = validateFormData(formData);
-
-    // Check if there are any validation errors
-    if (Object.keys(errors).length > 0) {
-      console.log("Validation errors:", errors);
-      setIsLoading(false); // Reset the loading state
-      return; // Exit the function early since validation failed
-    }
-    axios
-      .post(API_URL + "events", formData)
-      // .post(API_URL + "events", formData, {
-      //   headers: {
-      //     "Content-Type": "multipart/form-data",
-      //   },
-      // })
-      .then((res) => {
-        setTimeout(() => {
-          navigate("/discover"); // Redirect to the new page after 2 seconds
-        }, 3000);
-      })
-      .catch((error) => {
-        setIsLoading(false);
-        console.log(error);
+      // Use setDoc from Juno SDK to store the data
+      await setDoc({
+        collection: "favourse99",
+        doc: {
+          key: response.data.canisterId, // This should be a unique identifier for your document
+          data: dataToStore,
+        },
       });
-    // Submit formData to an API or do other processing...
+      // setDeploymentResult(response.data);
+      setIsSucces("success");
+      setTimeout(() => {
+        // navigate(`/${response.data.canisterId}`); // Redirect to the new page after 2 seconds
+        navigate("/discover"); // Redirect to the new page after 2 seconds
+      }, 2000);
+    } catch (error) {
+      // setDeploymentResult(error.message);
+      console.log(error.message);
+    }
   };
-
-  useEffect(() => {
-    const checkIfAuthenticated = async () => {
-      const isAuthenticated = await AuthService.isAuthenticated();
-      if (isAuthenticated) {
-        const principalId = await AuthService.getPrincipalId();
-        setUser({ principalId });
-      }
-    };
-
-    checkIfAuthenticated();
-  }, []);
 
   const handleLogin = async () => {
     console.log("clicked");
@@ -143,7 +210,8 @@ const CreateEventPage = () => {
             {/* Basic Information */}
             <BasicInformationForm
               onNameChange={(value) => handleInputChange("name", value)}
-              eventBanner={(value) => handleInputChange("event_banner", value)}
+              eventBanner={(value) => handleInputChange("logoData", value)}
+              logoType={(value) => handleInputChange("logoType", value)}
               onDescriptionChange={(value) =>
                 handleInputChange("description", value)
               }
@@ -164,9 +232,9 @@ const CreateEventPage = () => {
             <TicketCapacityForm
               freeToggle={formData.isFree}
               errorData={formErrors.name}
-              capacityData={(value) => handleInputChange("capacity", value)}
+              capacityData={(value) => handleInputChange("maxLimit", value)}
               isFreeData={(value) => handleInputChange("isFree", value)}
-              priceData={(value) => handleInputChange("ticket_price", value)}
+              priceData={(value) => handleInputChange("price", value)}
             />
 
             {/* Create Event Button */}
@@ -197,6 +265,49 @@ const CreateEventPage = () => {
             to access this feature.
           </p>
         </div>
+      )}
+      {isLoading && (
+        <DeployModal>
+          <div className="mt-4 text-2xl text-center flex flex-col justify-center items-center">
+            {isSuccess === "success" ? (
+              <div className="checkmark-container mb-4">
+                <svg
+                  className="checkmark"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 52 52"
+                >
+                  <circle
+                    className="checkmark__circle"
+                    cx="26"
+                    cy="26"
+                    r="25"
+                    fill="none"
+                  />
+                  <path
+                    className="checkmark__check"
+                    fill="none"
+                    d="M14.1 27.2l7.1 7.2 16.7-16.8"
+                  />
+                </svg>
+              </div>
+            ) : (
+              <img
+                className="h-52 w-auto mb-4 infinity-flip "
+                src={FavIcon}
+                alt="Favourse Logo"
+              />
+            )}
+            {isSuccess === "idle" && <h1>Start the Engine! 🚀</h1>}
+            {isSuccess === "deploying" && (
+              <h1 className="text-black">Deploying... Please wait 🛠️ 🔄</h1>
+            )}
+            {isSuccess === "success" && (
+              <h1 className="text-black font-semibold">
+                Deployment Successful! 🎉
+              </h1>
+            )}
+          </div>
+        </DeployModal>
       )}
     </div>
   );
