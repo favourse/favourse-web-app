@@ -155,6 +155,7 @@ const CreateEventPage = () => {
         logoType: response.data.logoType,
         logoData: response.data.logoData,
         name: formData.name,
+        description: formData.description,
         symbol: response.data.symbol,
         maxLimit: formData.maxLimit,
         location: formData.location,

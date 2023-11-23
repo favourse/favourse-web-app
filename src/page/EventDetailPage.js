@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { initJuno, getDoc } from "@junobuild/core";
-// import { useParams } from "react-router-dom"; // Import useParams to get the canisterId from URL
+// import { useParams } from "react-router-dom";
 
 export const EventDetailPage = () => {
   const [document, setDocument] = useState(null);
-  //   const { canisterId } = useParams(); // Retrieve the canisterId from the URL
+  // const { canisterId } = useParams();
 
   initJuno({
     satelliteId: "4knjt-tiaaa-aaaal-adenq-cai",
@@ -15,8 +15,8 @@ export const EventDetailPage = () => {
     const fetchDocument = async () => {
       try {
         const doc = await getDoc({
-          collection: "favourse99", // Use the correct collection name
-          key: "123",
+          collection: "favourse99",
+          key: "be2us-64aaa-aaaaa-qaabq-cai",
         });
         console.log(doc);
         if (doc) {
@@ -31,7 +31,7 @@ export const EventDetailPage = () => {
     };
 
     fetchDocument();
-  }, []); // Depend on user and canisterId
+  }, []);
 
   // Return UI elements to display the document
   return (
@@ -43,11 +43,9 @@ export const EventDetailPage = () => {
         {document ? (
           <div className="overflow-x-auto">
             <div className="flex items-center gap-6 px-2.5 py-1.5">
-              {/* Replace the content below with the actual content of your document */}
               <div className="line-clamp-3 text-left grow">
                 {document.data.name}
               </div>
-              {/* ... other fields from your document */}
             </div>
           </div>
         ) : (

@@ -49,11 +49,17 @@ function BasicInformationForm({
         const uniqueKey = `image_${Date.now()}_${Math.floor(
           Math.random() * 1000
         )}`;
+
+        // Create a new File object with a new name
+        const newFileName = uniqueKey + "." + file.name.split(".").pop();
+        const newFile = new File([file], newFileName, {
+          type: file.type,
+        });
         try {
           const assetKey = await uploadFile({
             collection: "favourse100",
             key: uniqueKey, // Generate or define a unique key
-            data: file,
+            data: newFile,
           });
           console.log("Success upload", assetKey.downloadUrl);
           setImagePreview(reader.result);
