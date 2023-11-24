@@ -17,10 +17,10 @@ export default function HeaderSection() {
         aria-label="Global"
       >
         <div className="flex lg:flex-1">
-          <a href="/" className="-m-1.5 p-1.5 z-20">
+          <a href="/" className="-m-1.5 p-1.5 z-0 md:z-20">
             <span className="sr-only">Favourse</span>
             <img
-              className="h-8 w-auto "
+              className="h-8 w-auto md:z-40 z-0"
               src={FavLogoWhite}
               alt="Favourse Logo"
             />
@@ -64,7 +64,7 @@ export default function HeaderSection() {
             <a href="/" className="-m-1.5 p-1.5">
               <span className="sr-only">Favourse</span>
               <img
-                className="h-8 w-auto z-30"
+                className="h-8 w-auto z-50"
                 src={FavLogo}
                 alt="Favourse Logo"
               />

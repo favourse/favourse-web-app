@@ -14,12 +14,13 @@ import {
 } from "../component/event";
 import HeaderSection from "../component/HeaderSection";
 import DeployModal from "../component/event/component/DeployModal";
+import { API_URL } from "../utils";
 // import { API_URL, validateFormData } from "../utils";
 
 // const ethers = require("ethers");
 const CreateEventPage = () => {
   initJuno({
-    satelliteId: "4knjt-tiaaa-aaaal-adenq-cai",
+    satelliteId: process.env.REACT_APP_SATELLITE_ID,
   });
   const [user, setUser] = useState(null);
 
@@ -144,10 +145,7 @@ const CreateEventPage = () => {
     }, 1000);
     e.preventDefault();
     try {
-      const response = await axios.post(
-        "http://localhost:3040/deploy",
-        formData
-      );
+      const response = await axios.post(API_URL + "/deploy", formData);
       const dataToStore = {
         principalId: response.data.principalId,
         canisterId: response.data.canisterId, // Make sure these fields are returned from the backend
@@ -177,8 +175,7 @@ const CreateEventPage = () => {
       // setDeploymentResult(response.data);
       setIsSucces("success");
       setTimeout(() => {
-        // navigate(`/${response.data.canisterId}`); // Redirect to the new page after 2 seconds
-        navigate("/discover"); // Redirect to the new page after 2 seconds
+        navigate(`/${response.data.canisterId}`); // Redirect to the new page after 2 seconds
       }, 2000);
     } catch (error) {
       // setDeploymentResult(error.message);

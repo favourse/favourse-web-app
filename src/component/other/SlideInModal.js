@@ -33,7 +33,7 @@ function SlideInModal({ isOpen, onClose, children }) {
 
       <div
         ref={modalRef}
-        className={`fixed z-50 p-5 md:p-3 top-0 right-0 w-full md:w-5/12 h-full  duration-500 transition-transform transform ${
+        className={`fixed z-50 p-5 md:p-3  top-0 right-0 w-full md:w-5/12 h-full  duration-500 transition-transform transform ${
           isOpen ? "translate-x-0" : " translate-x-full"
         }`}
       >
@@ -44,7 +44,7 @@ function SlideInModal({ isOpen, onClose, children }) {
               data-name="Layer 1"
               viewBox="0 0 100 125"
               fill="#ffffff"
-              className="w-5 h-5"
+              className="w-5 h-5 cursor-pointer"
               x="0px"
               y="0px"
               onClick={(e) => {

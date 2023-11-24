@@ -1,13 +1,17 @@
 import React from "react";
 import Moment from "moment";
 
+const defaultImage =
+  "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png";
+
 export default function TopContentModal({ event }) {
   return (
     <div className="w-full h-fit p-2 bg-zinc-800 rounded-md">
       <img
-        src={event.event_banner}
-        alt={event.id + " Event Banner"}
+        src={event.logoData}
+        alt={event.name + " Event Banner"}
         className="rounded-md"
+        onError={(e) => (e.target.src = defaultImage)}
       />
 
       {/* Title and event datetime */}
@@ -22,35 +26,35 @@ export default function TopContentModal({ event }) {
               className="bg-white text-[8px]  text-black/80  font-semibold text-center rounded-t-sm "
               style={{ padding: "2px 10px" }}
             >
-              {Moment(event.start_date).format("MMM").toUpperCase()}
+              {Moment(event.startDateTime).format("MMM").toUpperCase()}
             </div>
             <div className="text-center text-sm px-2 text-white">
-              {Moment(event.start_date).format("DD")}
+              {Moment(event.startDateTime).format("DD")}
             </div>
           </div>
 
           {/* Date and Time Content */}
           <div className="w-full h-10">
             {/* Date Content */}
-            {event.start_date === event.end_date ? (
+            {event.startDateTime === event.endDateData ? (
               <div>
                 <h3 className="font-semibold text-sm">
-                  {Moment(event.start_date).format("dddd, MMMM DD")}
+                  {Moment(event.startDateTime).format("dddd, MMMM DD")}
                 </h3>
                 <h3 className="text-white/70 text-xs">
-                  {Moment(event.start_datetime).format("hh:mm A")} to{" "}
-                  {Moment(event.end_datetime).format("hh:mm A")}
+                  {Moment(event.startDateTime).format("hh:mm A")} to{" "}
+                  {Moment(event.endDateData).format("hh:mm A")}
                 </h3>
               </div>
             ) : (
               <div>
                 <h3 className="font-semibold text-sm">
-                  {Moment(event.start_date).format("dddd, MMM DD")} -{" "}
-                  {Moment(event.end_date).format("MMM DD")}
+                  {Moment(event.startDateTime).format("dddd, MMM DD")} -{" "}
+                  {Moment(event.endDateData).format("MMM DD")}
                 </h3>
                 <h3 className="text-white/70 text-xs">
-                  {Moment(event.start_datetime).format("hh:mm A")} to{" "}
-                  {Moment(event.end_datetime).format("hh:mm A")}
+                  {Moment(event.startDateTime).format("hh:mm A")} to{" "}
+                  {Moment(event.endDateData).format("hh:mm A")}
                 </h3>
               </div>
             )}
@@ -102,7 +106,7 @@ export default function TopContentModal({ event }) {
                 <g>
                   <path fill="none" d="M0 0h24v24H0z" />
                   <path
-                    fill-rule="nonzero"
+                    fillRule="nonzero"
                     d="M16 4a1 1 0 0 1 1 1v4.2l5.213-3.65a.5.5 0 0 1 .787.41v12.08a.5.5 0 0 1-.787.41L17 14.8V19a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h14zm-1 2H3v12h12V6zM7.4 8.829a.4.4 0 0 1 .215.062l4.355 2.772a.4.4 0 0 1 0 .674L7.615 15.11A.4.4 0 0 1 7 14.77V9.23c0-.221.18-.4.4-.4zM21 8.84l-4 2.8v.718l4 2.8V8.84z"
                   />
                 </g>
@@ -119,10 +123,10 @@ export default function TopContentModal({ event }) {
               </div>
             ) : (
               <div>
-                <a href={event.location} target="_BLANK">
+                <a target="_BLANK">
                   <h3 className="font-semibold text-md flex flex-row">
                     Virtual Event
-                    <svg
+                    {/* <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="10px"
                       viewBox="0 0 32 40"
@@ -135,7 +139,7 @@ export default function TopContentModal({ event }) {
                         stroke="none"
                         stroke-width="1"
                         fill="none"
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                       >
                         <g
                           transform="translate(-6.000000, -8.000000)"
@@ -162,9 +166,9 @@ export default function TopContentModal({ event }) {
                           </g>
                         </g>
                       </g>
-                    </svg>
+                    </svg> */}
                   </h3>
-                  <h3 className="text-white/70 text-xs">Join Now</h3>
+                  <h3 className="text-white/70 text-xs">Registration Now</h3>
                 </a>
               </div>
             )}

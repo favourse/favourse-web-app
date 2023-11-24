@@ -11,35 +11,35 @@ export default function EventTitle({ event }) {
             className="bg-white text-[8px]  text-black/80  font-semibold text-center rounded-t-sm "
             style={{ padding: "2px 10px" }}
           >
-            {Moment(event.start_date).format("MMM").toUpperCase()}
+            {Moment(event.startDateTime).format("MMM").toUpperCase()}
           </div>
           <div className="text-center text-sm px-2 text-white">
-            {Moment(event.start_date).format("D")}
+            {Moment(event.startDateTime).format("D")}
           </div>
         </div>
 
         {/* Date and Time Content */}
         <div className="w-full h-10">
           {/* Date Content */}
-          {event.start_date === event.end_date ? (
+          {event.startDateTime === event.endDateData ? (
             <div>
               <h3 className="font-semibold text-sm">
-                {Moment(event.start_date).format("dddd, MMMM D")}
+                {Moment(event.startDateTime).format("dddd, MMMM D")}
               </h3>
               <h3 className="text-white/70 text-xs">
-                {Moment(event.start_datetime).format("hh:mm A")} to{" "}
-                {Moment(event.end_datetime).format("hh:mm A")}
+                {Moment(event.startDateTime).format("hh:mm A")} to{" "}
+                {Moment(event.endDateData).format("hh:mm A")}
               </h3>
             </div>
           ) : (
             <div>
               <h3 className="font-semibold text-sm">
-                {Moment(event.start_date).format("dddd, MMM D")} -{" "}
-                {Moment(event.end_date).format("MMM D")}
+                {Moment(event.startDateTime).format("dddd, MMM D")} -{" "}
+                {Moment(event.endDateData).format("MMM D")}
               </h3>
               <h3 className="text-white/70 text-xs">
-                {Moment(event.start_datetime).format("hh:mm A")} to{" "}
-                {Moment(event.end_datetime).format("hh:mm A")}
+                {Moment(event.startDateTime).format("hh:mm A")} to{" "}
+                {Moment(event.endDateData).format("hh:mm A")}
               </h3>
             </div>
           )}
@@ -106,52 +106,11 @@ export default function EventTitle({ event }) {
             </div>
           ) : (
             <div>
-              <a href={event.location} target="_BLANK">
+              <a target="_BLANK">
                 <h3 className="font-semibold text-md flex flex-row">
                   Virtual Event
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="10px"
-                    viewBox="0 0 32 40"
-                    version="1.1"
-                    className="ml-2"
-                    x="0px"
-                    y="0px"
-                  >
-                    <g
-                      stroke="none"
-                      stroke-width="1"
-                      fill="none"
-                      fill-rule="evenodd"
-                    >
-                      <g
-                        transform="translate(-6.000000, -8.000000)"
-                        fill="#ffffff"
-                      >
-                        <g transform="translate(23.000000, 23.000000) rotate(-135.000000) translate(-23.000000, -23.000000) ">
-                          <g transform="translate(2.000000, 2.000000)">
-                            <rect x="19" y="0" width="4" height="40" />
-                          </g>
-                          <g transform="translate(23.000000, 23.707107) rotate(45.000000) translate(-23.000000, -23.707107) translate(7.500000, 8.207107)">
-                            <rect
-                              x="6.03961325e-14"
-                              y="26"
-                              width="30"
-                              height="4"
-                            />
-                            <rect
-                              x="26"
-                              y="6.39488462e-14"
-                              width="4"
-                              height="30"
-                            />
-                          </g>
-                        </g>
-                      </g>
-                    </g>
-                  </svg>
                 </h3>
-                <h3 className="text-white/70 text-xs">Join Now</h3>
+                <h3 className="text-white/70 text-xs">Registration Now</h3>
               </a>
             </div>
           )}

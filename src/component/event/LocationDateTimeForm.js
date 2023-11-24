@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import VideoCameraIcon from "../../assets/video-camera-icon.svg";
 
 const LocationDateTimeForm = ({
@@ -12,6 +12,9 @@ const LocationDateTimeForm = ({
 }) => {
   // const [timezone, setTimezone] = useState("Asia/Makassar");
   // eslint-disable-next-line no-unused-vars
+  const today = new Date().toISOString().split("T")[0];
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   return (
     <div className="p-4 rounded-md flex text-left flex-col md:flex-col w-full border bg-white">
@@ -55,7 +58,14 @@ const LocationDateTimeForm = ({
               </label>
               <input
                 type="date"
-                onChange={(e) => startDateData(e.target.value)}
+                min={today}
+                required
+                // onChange={(e) => startDateData(e.target.value)}
+                onChange={(e) => {
+                  startDateData(e.target.value);
+                  setStartDate(e.target.value); // Update the start date state
+                  setEndDate(""); // Reset end date when start date changes
+                }}
                 className="border border-gray-300 p-2 rounded-lg w-full"
               />
             </div>
@@ -65,6 +75,7 @@ const LocationDateTimeForm = ({
               </label>
               <input
                 type="time"
+                required
                 // eslint-disable-next-line no-unused-vars
                 onChange={(e) => startTimeData(e.target.value)}
                 className="border border-gray-300 p-2 rounded-lg w-full"
@@ -78,8 +89,15 @@ const LocationDateTimeForm = ({
               </label>
               <input
                 type="date"
+                required
+                min={startDate}
+                value={endDate}
                 // eslint-disable-next-line no-unused-vars
-                onChange={(e) => endDateData(e.target.value)}
+                // onChange={(e) => endDateData(e.target.value)}
+                onChange={(e) => {
+                  endDateData(e.target.value);
+                  setEndDate(e.target.value); // Update the end date state
+                }}
                 className="border border-gray-300 p-2 rounded-lg w-full"
               />
             </div>
@@ -89,6 +107,7 @@ const LocationDateTimeForm = ({
               </label>
               <input
                 type="time"
+                required
                 // eslint-disable-next-line no-unused-vars
                 onChange={(e) => endTimeData(e.target.value)}
                 className="border border-gray-300 p-2 rounded-lg w-full"

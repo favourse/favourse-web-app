@@ -1,7 +1,49 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import { numberWithCommas } from "../../../utils/utils";
+import { API_URL } from "../../../utils";
+import axios from "axios";
 
 export default function ModalRegistrationSection({ event }) {
+  const price = event?.price ? numberWithCommas(event.price) : "0";
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [isSuccess, setIsSucces] = useState("idle");
+
+  const handleSubmit = async (e) => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsSucces("deploying");
+    }, 1000);
+    e.preventDefault();
+    try {
+      const mintData = {
+        principalId: event.principalId,
+        canisterName: event.canisterName,
+        logoData: event.logoData,
+        name: event.name,
+        symbol: event.symbol,
+        maxLimit: event.maxLimit,
+        location: event.location,
+        startDateTime: event.startDateTime,
+        endDateData: event.endDateTime,
+        isInPerson: event.isInPerson,
+        isFree: event.isFree,
+        price: event.price,
+      };
+      const response = await axios.post(API_URL + "/mint-nft", mintData);
+
+      setIsSucces("success");
+      setTimeout(() => {
+        navigate(`/${response.data.canisterId}`); // Redirect to the new page after 2 seconds
+      }, 2000);
+    } catch (error) {
+      // setDeploymentResult(error.message);
+      console.log(error.message);
+    }
+  };
   return (
     <div className="w-full h-fit bg-zinc-800 rounded-md">
       <div className="border-b-[1px] border-white/10 py-2 px-6 flex flex-row items-center font-semibold text-lg">
@@ -13,8 +55,8 @@ export default function ModalRegistrationSection({ event }) {
             version="1.1"
             x="0px"
             y="0px"
-            fill-rule="evenodd"
-            clip-rule="evenodd"
+            fillRule="evenodd"
+            clipRule="evenodd"
             stroke-linejoin="round"
             stroke-miterlimit="2"
           >
@@ -68,22 +110,34 @@ export default function ModalRegistrationSection({ event }) {
           <p className="text-sm mt-2">
             Hello! To join the event, please register below.
           </p>
-          <button className="w-full rounded-md bg-white text-black py-[8px] text-sm font-semibold mt-5 mb-2">
-            Get Ticket
+          <button
+            onClick={handleSubmit}
+            className="w-full rounded-md bg-white text-black py-[8px] text-sm font-semibold mt-5 mb-2"
+          >
+            {isLoading
+              ? "Mint NFT"
+              : isSuccess === "success"
+              ? "Success Mint NFT"
+              : "Get Ticket"}
           </button>
         </div>
       ) : (
         <div className="py-2 px-6">
           <h4 className="text-sm text-white/80">Ticket Price</h4>
-          <h1 className="text-2xl font-semibold">
-            ${numberWithCommas(event.ticket_price)}
-          </h1>
+          <h1 className="text-2xl font-semibold">${price}</h1>
           <p className="text-sm mt-2">
-            The price of this event is ${numberWithCommas(event.ticket_price)}.
-            To join the event, please get your ticket below.
+            The price of this event is ${price}. To join the event, please get
+            your ticket below.
           </p>
-          <button className="w-full rounded-md bg-white text-black py-[8px] text-sm font-semibold mt-5 mb-2">
-            Get Ticket
+          <button
+            onClick={handleSubmit}
+            className="w-full rounded-md bg-white text-black py-[8px] text-sm font-semibold mt-5 mb-2"
+          >
+            {isLoading
+              ? "Mint NFT"
+              : isSuccess === "success"
+              ? "Success Mint NFT"
+              : "Get Ticket"}
           </button>
         </div>
       )}
