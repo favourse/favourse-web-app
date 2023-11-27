@@ -1,52 +1,16 @@
-import React, { useState, useEffect } from "react";
-import * as AuthService from "../../../auth/AuthService";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { numberWithCommas } from "../../../utils/utils";
 import { API_URL } from "../../../utils";
 import axios from "axios";
-import DeployModal from "./DeployModal";
-import FavIcon from "../../../assets/fav-icon.png";
 
 export default function ModalRegistrationSection({ event }) {
   const price = event?.price ? numberWithCommas(event.price) : "0";
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const [isLogin, setIsLogin] = useState(false);
-  const [isSuccess, setIsSucces] = useState("minting");
-  const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    const checkIfAuthenticated = async () => {
-      const isAuthenticated = await AuthService.isAuthenticated();
-      if (isAuthenticated) {
-        const principalUserId = await AuthService.getPrincipalId();
-        setUser({ principalUserId });
-      }
-    };
-
-    checkIfAuthenticated();
-  }, []);
-
-  // const handleSubmit = (e) => {
-  //   setIsLoading(true);
-  //   setTimeout(() => {
-  //     setIsSucces("success");
-  //     setTimeout(() => {
-  //       navigate("/my-ticket");
-  //     }, 2000);
-  //   }, 3000);
-  // };
-  const popupLogin = (e) => {
-    setIsLogin(true);
-  };
-  const handleLogin = async () => {
-    console.log("clicked");
-    await AuthService.login(() => {
-      // Perform actions after successful login
-      window.location.reload(); // or use React Router to redirect
-    });
-  };
+  const [isSuccess, setIsSucces] = useState("idle");
 
   const handleSubmit = async (e) => {
     setIsLoading(true);
@@ -58,19 +22,23 @@ export default function ModalRegistrationSection({ event }) {
       const mintData = {
         principalId: event.principalId,
         canisterName: event.canisterName,
-        canisterId: EventTarget.canisterId,
         logoData: event.logoData,
         name: event.name,
+        symbol: event.symbol,
+        maxLimit: event.maxLimit,
         location: event.location,
         startDateTime: event.startDateTime,
-        endDateData: event.endDateData,
+        endDateData: event.endDateTime,
+        isInPerson: event.isInPerson,
+        isFree: event.isFree,
+        price: event.price,
       };
       const response = await axios.post(API_URL + "/mint-nft", mintData);
 
       setIsSucces("success");
-      // setTimeout(() => {
-      //   navigate(`/${response.data.canisterId}`); // Redirect to the new page after 2 seconds
-      // }, 2000);
+      setTimeout(() => {
+        navigate(`/${response.data.canisterId}`); // Redirect to the new page after 2 seconds
+      }, 2000);
     } catch (error) {
       // setDeploymentResult(error.message);
       console.log(error.message);
@@ -142,25 +110,16 @@ export default function ModalRegistrationSection({ event }) {
           <p className="text-sm mt-2">
             Hello! To join the event, please register below.
           </p>
-          {user ? (
-            <button
-              onClick={handleSubmit}
-              className="w-full rounded-md bg-white text-black py-[8px] text-sm font-semibold mt-5 mb-2"
-            >
-              {isLoading
-                ? "Mint NFT"
-                : isSuccess === "success"
-                ? "Success Mint NFT"
-                : "Get Ticket"}
-            </button>
-          ) : (
-            <button
-              onClick={popupLogin}
-              className="w-full rounded-md bg-white text-black py-[8px] text-sm font-semibold mt-5 mb-2"
-            >
-              Get Ticket
-            </button>
-          )}
+          <button
+            onClick={handleSubmit}
+            className="w-full rounded-md bg-white text-black py-[8px] text-sm font-semibold mt-5 mb-2"
+          >
+            {isLoading
+              ? "Mint NFT"
+              : isSuccess === "success"
+              ? "Success Mint NFT"
+              : "Get Ticket"}
+          </button>
         </div>
       ) : (
         <div className="py-2 px-6">
@@ -170,87 +129,17 @@ export default function ModalRegistrationSection({ event }) {
             The price of this event is ${price}. To join the event, please get
             your ticket below.
           </p>
-          {user ? (
-            <button
-              onClick={handleSubmit}
-              className="w-full rounded-md bg-white text-black py-[8px] text-sm font-semibold mt-5 mb-2"
-            >
-              {isLoading
-                ? "Mint NFT"
-                : isSuccess === "success"
-                ? "Success Mint NFT"
-                : "Get Ticket"}
-            </button>
-          ) : (
-            <button
-              onClick={popupLogin}
-              className="w-full rounded-md bg-white text-black py-[8px] text-sm font-semibold mt-5 mb-2"
-            >
-              Get Ticket
-            </button>
-          )}
+          <button
+            onClick={handleSubmit}
+            className="w-full rounded-md bg-white text-black py-[8px] text-sm font-semibold mt-5 mb-2"
+          >
+            {isLoading
+              ? "Mint NFT"
+              : isSuccess === "success"
+              ? "Success Mint NFT"
+              : "Get Ticket"}
+          </button>
         </div>
-      )}
-      {isLoading && (
-        <DeployModal>
-          <div className="mt-4 text-2xl text-center flex flex-col justify-center items-center">
-            {isSuccess === "success" ? (
-              <div className="checkmark-container mb-4">
-                <svg
-                  className="checkmark"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 52 52"
-                >
-                  <circle
-                    className="checkmark__circle"
-                    cx="26"
-                    cy="26"
-                    r="25"
-                    fill="none"
-                  />
-                  <path
-                    className="checkmark__check"
-                    fill="none"
-                    d="M14.1 27.2l7.1 7.2 16.7-16.8"
-                  />
-                </svg>
-              </div>
-            ) : (
-              <img
-                className="h-52 w-auto mb-4 infinity-flip "
-                src={FavIcon}
-                alt="Favourse Logo"
-              />
-            )}
-            {isSuccess === "idle" && <h1>Start the Engine! 🚀</h1>}
-            {isSuccess === "minting" && (
-              <h1 className="text-black">Minting NFT Ticket</h1>
-            )}
-            {isSuccess === "success" && (
-              <h1 className="text-black font-semibold">Successful! 🎉</h1>
-            )}
-          </div>
-        </DeployModal>
-      )}
-      {isLogin && (
-        <DeployModal>
-          <div className="mt-4  text-center flex flex-col text-black justify-center items-center">
-            <h1 className="text-7xl font-semibold mb-1">Upps</h1>
-            <h2 className="text-xl my-3">Please Login First!</h2>
-            <a
-              onClick={handleLogin}
-              className="rounded-lg bg-violet-800 text-sm text-white px-3 py-1 cursor-pointer"
-            >
-              Login Now
-            </a>
-            {/* <a
-              onClick={setIsLogin(false)}
-              className="text-black/20 hover:text-black/70 transition-all cursor-pointer mt-7"
-            >
-              Close
-            </a> */}
-          </div>
-        </DeployModal>
       )}
     </div>
   );

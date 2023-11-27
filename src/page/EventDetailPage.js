@@ -84,19 +84,35 @@ export const EventDetailPage = () => {
       <HeaderSection />
       <div className="p-4 md:p-8 lg:w-2/3 mx-auto">
         {ready ? (
-          <>
-            <div className="mb-6"></div>
-            <div className="space-y-6 text-white">
-              <TopContentModal event={document ? document.data : {}} />
-              {/* <div className="py-2"></div> */}
-              <ModalRegistrationSection event={document ? document.data : {}} />
-              {/* <div className="py-2"></div> */}
-              <ModalAboutSection event={document ? document.data : {}} />
-              {/* <div className="py-2"></div> */}
-              <ModalHostSection />
-              <div className="py-2"></div>
-            </div>
-          </>
+          document ? (
+            <>
+              <div className="mb-6"></div>
+              <div className="space-y-6 text-white">
+                <TopContentModal event={document ? document.data : {}} />
+                {/* <div className="py-2"></div> */}
+                <ModalRegistrationSection
+                  event={document ? document.data : {}}
+                />
+                {/* <div className="py-2"></div> */}
+                <ModalAboutSection event={document ? document.data : {}} />
+                {/* <div className="py-2"></div> */}
+                <ModalHostSection />
+                <div className="py-2"></div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="space-y-6 flex flex-col justify-center items-center text-white pt-72 md:pt-72 text-center text-3xl md:text-6xl font-semibold ">
+                Upps.. Not Found!
+                <a
+                  href="/"
+                  className="text-sm mt-5 bg-violet-800 py-1 px-3 rounded-md"
+                >
+                  Back to Home
+                </a>
+              </div>
+            </>
+          )
         ) : (
           <p>Loading the data</p>
         )}

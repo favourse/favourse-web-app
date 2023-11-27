@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, Popover } from "@headlessui/react";
 import FavLogoWhite from "../assets/Favourse Logo White.png";
 import FavLogo from "../assets/Favourse Logo.png";
+import * as AuthService from "../auth/AuthService";
 
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 // import ConnectButton from "./other/ConnectButton";
@@ -9,6 +10,19 @@ import LoginButton from "./other/LoginButton";
 
 export default function HeaderSection() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const checkIfAuthenticated = async () => {
+      const isAuthenticated = await AuthService.isAuthenticated();
+      if (isAuthenticated) {
+        const principalUserId = await AuthService.getPrincipalId();
+        setUser({ principalUserId });
+      }
+    };
+
+    checkIfAuthenticated();
+  }, []);
 
   return (
     <header className="z-20">
@@ -49,6 +63,14 @@ export default function HeaderSection() {
           >
             Create Event
           </a>
+          {user && (
+            <a
+              href="/my-ticket"
+              className="text-sm font-semibold leading-6 text-white"
+            >
+              My Ticket
+            </a>
+          )}
           <LoginButton />
         </Popover.Group>
       </nav>
@@ -93,6 +115,14 @@ export default function HeaderSection() {
                 >
                   Create Event
                 </a>
+                {user && (
+                  <a
+                    href="/my-ticket"
+                    className="text-sm font-semibold leading-6 text-white"
+                  >
+                    My Ticket
+                  </a>
+                )}
               </div>
               <div className="py-6">
                 <LoginButton />

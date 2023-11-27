@@ -14,7 +14,7 @@ function App() {
         <Route path="/discover" element={<DiscoverPage />} />
         <Route path="/:canisterId" element={<EventDetailPage />} />
         {/* <Route path="/detail" element={<EventDetailPage />} /> */}
-        <Route path="/ticket" element={<MyTicketNFT />} />
+        <Route path="/my-ticket" element={<MyTicketNFT />} />
         <Route path="/mint" element={<MintNFTTickets />} />
         <Route path="/deploy" element={<DeployCanisterForm />} />
       </Routes>
