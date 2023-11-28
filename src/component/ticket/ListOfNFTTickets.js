@@ -4,13 +4,13 @@ import { idlFactory } from "../../service.did";
 import { Principal } from "@dfinity/principal";
 import TicketItem from "./component/TicketItem";
 
-const dip721NFTCanisterId = process.env.REACT_APP_CANISTER_ID;
+// const dip721NFTCanisterId = process.env.REACT_APP_CANISTER_ID;
 
 const agent = new HttpAgent({
   host: process.env.REACT_APP_LOCAL_NETWORK,
 });
 
-const ListOfNFTTickets = ({ userPrincipal }) => {
+const ListOfNFTTickets = ({ userPrincipal, canisterId }) => {
   const [nfts, setNfts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -25,7 +25,7 @@ const ListOfNFTTickets = ({ userPrincipal }) => {
         const principal = Principal.fromText(userPrincipal);
         const dip721NFTActor = await Actor.createActor(idlFactory, {
           agent,
-          canisterId: dip721NFTCanisterId,
+          canisterId: canisterId,
         });
 
         // Call the `getTokenIdsForUserDip721` method from the smart contract
@@ -84,7 +84,7 @@ const ListOfNFTTickets = ({ userPrincipal }) => {
   return (
     <div className="flex flex-wrap justify-center">
       {nfts.map((nft, index) => {
-        return <TicketItem key={index} data={nft} />;
+        return <TicketItem key={index} data={nft} canisterId={canisterId} />;
       })}
     </div>
   );

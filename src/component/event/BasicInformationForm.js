@@ -46,7 +46,7 @@ function BasicInformationForm({
 
         // const buffer = new Uint8Array(reader.result);
         // Generate a unique key using timestamp and random number
-        const uniqueKey = `image_${Date.now()}_${Math.floor(
+        const uniqueKey = `image-${Date.now()}-${Math.floor(
           Math.random() * 1000
         )}`;
 

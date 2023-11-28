@@ -14,7 +14,7 @@ import {
 } from "../component/event";
 import HeaderSection from "../component/HeaderSection";
 import DeployModal from "../component/event/component/DeployModal";
-import { API_URL } from "../utils";
+import { LIVE_API_URL } from "../utils";
 // import { API_URL, validateFormData } from "../utils";
 
 // const ethers = require("ethers");
@@ -145,7 +145,7 @@ const CreateEventPage = () => {
     }, 1000);
     e.preventDefault();
     try {
-      const response = await axios.post(API_URL + "/deploy", formData);
+      const response = await axios.post(LIVE_API_URL + "/deploy", formData);
       const dataToStore = {
         principalId: response.data.principalId,
         canisterId: response.data.canisterId, // Make sure these fields are returned from the backend
@@ -178,6 +178,12 @@ const CreateEventPage = () => {
         navigate(`/${response.data.canisterId}`); // Redirect to the new page after 2 seconds
       }, 2000);
     } catch (error) {
+      setTimeout(() => {
+        setIsSucces("error");
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 2000);
+      }, 2000);
       // setDeploymentResult(error.message);
       console.log(error.message);
     }
@@ -267,7 +273,16 @@ const CreateEventPage = () => {
       {isLoading && (
         <DeployModal>
           <div className="mt-4 text-2xl text-center flex flex-col justify-center items-center">
-            {isSuccess === "success" ? (
+            {isSuccess === "idle" || isSuccess === "deploying" ? (
+              <img
+                className="h-52 w-auto mb-4 infinity-flip "
+                src={FavIcon}
+                alt="Favourse Logo"
+              />
+            ) : (
+              <></>
+            )}
+            {isSuccess === "success" && (
               <div className="checkmark-container mb-4">
                 <svg
                   className="checkmark"
@@ -288,12 +303,31 @@ const CreateEventPage = () => {
                   />
                 </svg>
               </div>
-            ) : (
-              <img
-                className="h-52 w-auto mb-4 infinity-flip "
-                src={FavIcon}
-                alt="Favourse Logo"
-              />
+            )}
+
+            {isSuccess === "error" && (
+              <div className="checkmark-container mb-4">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  version="1.1"
+                  viewBox="0 0 333.33 416.66249999999997"
+                  x="0px"
+                  y="0px"
+                  fillRule="evenodd"
+                  clipRule="evenodd"
+                  className=""
+                >
+                  <defs>
+                    <style type="text/css"></style>
+                  </defs>
+                  <g>
+                    <path
+                      class="fil0"
+                      d="M79.81 3.33l173.7 0c2.69,0 5.11,1.11 6.85,2.89l66.83 66.83c1.87,1.87 2.8,4.32 2.8,6.77l0 173.7c0,2.69 -1.11,5.11 -2.89,6.85l-66.83 66.83c-1.87,1.87 -4.32,2.8 -6.77,2.8l-173.7 0c-2.69,0 -5.11,-1.11 -6.85,-2.89l-66.83 -66.83c-1.87,-1.87 -2.8,-4.32 -2.8,-6.77l-0 -173.7c0,-2.69 1.11,-5.11 2.89,-6.85l66.83 -66.83c1.87,-1.87 4.32,-2.8 6.77,-2.8zm7.11 91.44l7.85 -7.85c6.35,-6.35 14.7,-9.52 23.05,-9.52 8.35,0 16.7,3.17 23.05,9.52l25.8 25.79 25.8 -25.79c6.35,-6.35 14.7,-9.52 23.05,-9.52 8.35,0 16.7,3.17 23.05,9.52l7.85 7.85c6.35,6.35 9.52,14.7 9.52,23.05 0,8.35 -3.17,16.7 -9.52,23.05l-25.79 25.8 25.79 25.8c6.35,6.35 9.52,14.7 9.52,23.05 0,8.35 -3.17,16.7 -9.52,23.05l-7.85 7.85c-6.35,6.35 -14.7,9.52 -23.05,9.52 -8.35,0 -16.7,-3.17 -23.05,-9.52l-25.8 -25.79 -25.8 25.79c-6.35,6.35 -14.7,9.52 -23.05,9.52 -8.34,0 -16.7,-3.17 -23.05,-9.52l-7.85 -7.85c-6.35,-6.35 -9.52,-14.7 -9.52,-23.05 0,-8.35 3.17,-16.7 9.52,-23.05l25.79 -25.8 -25.79 -25.8c-6.35,-6.35 -9.52,-14.7 -9.52,-23.05 0,-8.35 3.17,-16.7 9.52,-23.05zm21.38 5.69l-7.85 7.85c-2.61,2.61 -3.91,6.06 -3.91,9.51 0,3.46 1.31,6.91 3.91,9.52l32.56 32.56c3.74,3.74 3.74,9.8 0,13.54l-32.56 32.56c-2.61,2.61 -3.91,6.06 -3.91,9.52 0,3.46 1.31,6.91 3.91,9.51l7.85 7.85c2.61,2.61 6.06,3.91 9.51,3.91 3.46,0 6.91,-1.31 9.52,-3.91l32.56 -32.56c3.74,-3.74 9.8,-3.74 13.54,0l32.56 32.56c2.61,2.61 6.06,3.91 9.52,3.91 3.46,0 6.91,-1.31 9.51,-3.91l7.85 -7.85c2.61,-2.61 3.91,-6.06 3.91,-9.51 0,-3.46 -1.31,-6.91 -3.91,-9.52l-32.56 -32.56c-3.74,-3.74 -3.74,-9.8 0,-13.54l32.56 -32.56c2.61,-2.61 3.91,-6.06 3.91,-9.52 0,-3.46 -1.31,-6.91 -3.91,-9.51l-7.85 -7.85c-2.61,-2.61 -6.06,-3.91 -9.51,-3.91 -3.46,0 -6.91,1.31 -9.52,3.91l-32.56 32.56c-3.74,3.74 -9.8,3.74 -13.54,0l-32.56 -32.56c-2.61,-2.61 -6.06,-3.91 -9.52,-3.91 -3.45,0 -6.91,1.31 -9.51,3.91zm141.24 -77.99l-165.77 0 -61.31 61.31 0 165.77 61.31 61.31 165.77 0 61.31 -61.31 0 -165.77 -61.31 -61.31z"
+                    />
+                  </g>
+                </svg>
+              </div>
             )}
             {isSuccess === "idle" && <h1>Start the Engine! 🚀</h1>}
             {isSuccess === "deploying" && (
@@ -303,6 +337,9 @@ const CreateEventPage = () => {
               <h1 className="text-black font-semibold">
                 Deployment Successful! 🎉
               </h1>
+            )}
+            {isSuccess === "error" && (
+              <h1 className="text-black font-semibold">Deployment Failed!</h1>
             )}
           </div>
         </DeployModal>

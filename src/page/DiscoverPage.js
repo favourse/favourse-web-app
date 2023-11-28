@@ -10,8 +10,8 @@ import { initJuno, listDocs } from "@junobuild/core";
 const DiscoverPage = () => {
   const [events, setEvents] = useState([]);
   const [pastEvents, setPastEvents] = useState([]);
-  const [ready, setReady] = useState(false);
   const [activeTab, setActiveTab] = useState("upcoming");
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     (async () => {

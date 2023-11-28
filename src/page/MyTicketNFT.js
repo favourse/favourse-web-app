@@ -6,16 +6,60 @@ import HeaderSection from "../component/HeaderSection";
 import TicketNFTComponent from "../component/ticket/TicketNFTComponent";
 import ListOfNFTTickets from "../component/ticket/ListOfNFTTickets";
 import { truncateFromMiddle } from "../utils";
+import { initJuno, listDocs } from "@junobuild/core";
 
 export default function MyTicketNFT() {
   const [userPrincipalId, setUserPrincipalId] = useState(null);
+  const [events, setEvents] = useState([]);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      await initJuno({
+        satelliteId: "4knjt-tiaaa-aaaal-adenq-cai",
+      });
+
+      setReady(true);
+      console.log(ready);
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (!ready) {
+      return;
+    }
+    const fetchAllDocuments = async () => {
+      try {
+        const eventList = await listDocs({
+          collection: "favourse99",
+          filter: {
+            order: {
+              desc: true,
+              field: "startDateTime",
+            },
+          },
+        });
+
+        if (eventList) {
+          setEvents(eventList.items);
+        } else {
+          throw new Error("Document not found");
+        }
+      } catch (error) {
+        console.error("Error fetching document:", error);
+        setEvents(null);
+      }
+    };
+
+    fetchAllDocuments();
+  }, [ready]);
 
   useEffect(() => {
     const checkIfAuthenticated = async () => {
       const isAuthenticated = await AuthService.isAuthenticated();
       if (isAuthenticated) {
         const principalUserId = await AuthService.getPrincipalId();
-        setUserPrincipalId({ principalUserId });
+        setUserPrincipalId(principalUserId);
       } else {
         console.error("No principal ID found");
       }
@@ -59,33 +103,24 @@ export default function MyTicketNFT() {
             <div className="w-full md:w-4/5 mt-3 p-4 md:p-10 rounded-sm grid grid-cols-1 md:grid-cols-1 gap-4 justify-center items-center">
               {/* {user ? <div>tes</div> : <TicketNFTComponent principalId={user} />} */}
               {/* <TicketNFTComponent /> */}
-              {/* <ListOfNFTTickets userPrincipal={userPrincipalId} /> */}
-              <div className="max-w-sm rounded-lg overflow-hidden shadow-lg bg-white text-black m-4 p-4">
-                <img
-                  src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819"
-                  className="rounded-lg"
-                />
-                <div className="flex text-black/50 flex-row mt-2 text-xs justify-between items-center">
-                  <h3>
-                    Ticket ID : <b className="text-black/80">01</b>
-                  </h3>
-                  <h3>
-                    canister ID :{" "}
-                    <b className="text-black/80">
-                      {truncateFromMiddle("bw4dl-smaaa-aaaaa-qaacq-cai", 10)}{" "}
-                    </b>
-                  </h3>
-                </div>
-                <h2 className="font-bold text-2xl my-3">
-                  Crypto New Year Party
-                </h2>
-                <div className="flex flex-row justify-between text-sm items-center">
-                  <h4 className="text-black/80">Network</h4>
-                  <h4>
-                    <b>ICP Network</b>
-                  </h4>
-                </div>
-              </div>
+              {events ? (
+                events.map((event, index) => (
+                  <div key={event.data.canisterId}>
+                    {/* Render a paragraph element: */}
+                    <p className="text-white" key={index}>
+                      {event.data.canisterId}
+                    </p>
+                    {/* Uncomment and return your ListOfNFTTickets component if needed */}
+                    <ListOfNFTTickets
+                      key={event.data.canisterId}
+                      userPrincipal={userPrincipalId}
+                      canisterId={event.data.canisterId}
+                    />
+                  </div>
+                ))
+              ) : (
+                <p className="text-white">Loading</p>
+              )}
             </div>
           </>
         </div>

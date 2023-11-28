@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import SlideInModal from "../other/SlideInModal";
 import EventTitle from "./component/EventTitle";
@@ -6,6 +6,7 @@ import TopContentModal from "./component/TopContentModal";
 import ModalRegistrationSection from "./component/ModalRegistrationSection";
 import ModalAboutSection from "./component/ModalAboutSection";
 import ModalHostSection from "./component/ModalHostSection";
+import { initJuno } from "@junobuild/core";
 
 const defaultImage =
   "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png";
@@ -25,6 +26,14 @@ const EventItem = ({ event }) => {
       navigate(`/${event.canisterId}`);
     }
   };
+
+  useEffect(() => {
+    (async () => {
+      await initJuno({
+        satelliteId: "4knjt-tiaaa-aaaal-adenq-cai",
+      });
+    })();
+  }, []);
   return (
     <div
       onClick={handleEventClick}
@@ -34,7 +43,8 @@ const EventItem = ({ event }) => {
         <img
           src={event.logoData}
           alt={event.name + " Event Image"}
-          className="md:rounded-l-md rounded-t-md h-full object-fill text-white text-xs"
+          typeof="image/jpeg"
+          className="md:rounded-l-md rounded-t-md  object-fill text-white text-xs"
           onError={(e) => (e.target.src = defaultImage)}
         />
       </div>

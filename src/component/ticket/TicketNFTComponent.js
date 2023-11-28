@@ -45,43 +45,6 @@ const TicketNFTComponent = () => {
     }
   };
 
-  // // Function to post data to the canister
-  // const safeTransferFromDip721 = async (
-  //   fromPrincipal,
-  //   toPrincipal,
-  //   tokenId
-  // ) => {
-  //   try {
-  //     const receipt = await myCanisterActor.safeTransferFromDip721(
-  //       fromPrincipal,
-  //       toPrincipal,
-  //       tokenId
-  //     );
-  //     setResponse(receipt);
-  //   } catch (error) {
-  //     console.error("Error transferring NFT:", error);
-  //   }
-  // };
-
-  // // Event handlers that call the above functions
-  // const handleGetBalance = () => {
-  //   // You would replace 'user-principal-id' with the actual principal ID
-  //   if (!userPrincipalId) {
-  //     console.log("Login First!");
-  //     return;
-  //   }
-  //   getBalanceOfDip721(userPrincipalId);
-  // };
-
-  // const handleTransfer = () => {
-  //   // You would replace these with actual principal IDs and token ID
-  //   safeTransferFromDip721(
-  //     "5ib3s-r5a77-exfkc-43egg-bcvjp-ovimv-xzffi-gjepj-ggama-akpk2-hqe",
-  //     "to3s7r-5yogk-oy6kx-mzw6b-a4g3r-4weat-klypp-kzcsa-fcjqy-p5drx-vae",
-  //     "6"
-  //   );
-  // };
-
   return (
     <div className="text-white">
       <p>Total Tickets: {balance}</p>
