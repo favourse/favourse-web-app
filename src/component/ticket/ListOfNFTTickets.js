@@ -6,7 +6,7 @@ import TicketItem from "./component/TicketItem";
 
 // const dip721NFTCanisterId = process.env.REACT_APP_CANISTER_ID;
 
-const ListOfNFTTickets = ({ userPrincipal, canisterId, isMain }) => {
+const ListOfNFTTickets = ({ userPrincipal, canisterId, isMain, eventName }) => {
   const [nfts, setNfts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -48,7 +48,7 @@ const ListOfNFTTickets = ({ userPrincipal, canisterId, isMain }) => {
         // After getting metadataResults from Promise.allSettled
         const successfulMetadata = metadataResults
           .filter((result) => result.status === "fulfilled" && result.value.Ok)
-          .map((result) => {
+          .map((result, index) => {
             // Assuming the ID is in the first element of the Ok array
             const item = result.value.Ok[0];
             const keyValueData = {};
@@ -63,6 +63,7 @@ const ListOfNFTTickets = ({ userPrincipal, canisterId, isMain }) => {
 
             return {
               ...item,
+              tokenId: tokenIds[index],
               id, // Add the ID here
               key_val_data: keyValueData, // This will replace the key_val_data array with an object
             };
@@ -81,15 +82,30 @@ const ListOfNFTTickets = ({ userPrincipal, canisterId, isMain }) => {
   }, [userPrincipal]);
 
   if (loading) {
-    return <div>Loading your NFTs...</div>;
+    return <div className="text-center text-white">Loading your NFTs...</div>;
   }
 
   return (
-    <div className="flex flex-wrap justify-center">
-      {nfts.map((nft, index) => {
-        return <TicketItem key={index} data={nft} canisterId={canisterId} />;
-      })}
-    </div>
+    <>
+      {nfts.length !== 0 ? (
+        <>
+          <h1 className="text-white text-center text-2xl"> {eventName}</h1>
+          <div className="flex flex-wrap justify-center">
+            {nfts
+              .sort((a, b) => {
+                return Number(a.tokenId) - Number(b.tokenId);
+              })
+              .map((nft, index) => {
+                return (
+                  <TicketItem key={index} data={nft} canisterId={canisterId} />
+                );
+              })}
+          </div>
+        </>
+      ) : (
+        <></>
+      )}
+    </>
   );
 };
 

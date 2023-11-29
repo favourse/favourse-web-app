@@ -38,7 +38,7 @@ const DiscoverPage = () => {
   useEffect(() => {
     (async () => {
       await initJuno({
-        satelliteId: "4knjt-tiaaa-aaaal-adenq-cai",
+        satelliteId: process.env.REACT_APP_SATELLITE_ID,
       });
 
       setReady(true);

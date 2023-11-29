@@ -16,7 +16,7 @@ export default function MyTicketNFT() {
   useEffect(() => {
     (async () => {
       await initJuno({
-        satelliteId: "4knjt-tiaaa-aaaal-adenq-cai",
+        satelliteId: process.env.REACT_APP_SATELLITE_ID,
       });
 
       setReady(true);
@@ -70,6 +70,7 @@ export default function MyTicketNFT() {
 
   const pinnedEvent = {
     canisterId: "i6hws-ryaaa-aaaam-abz3a-cai",
+    name: "Asia Blockchain Festival",
     agentUrl: "https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io",
   };
 
@@ -109,29 +110,25 @@ export default function MyTicketNFT() {
               {/* {user ? <div>tes</div> : <TicketNFTComponent principalId={user} />} */}
               {/* <TicketNFTComponent /> */}
               <div key={pinnedEvent.canisterId}>
-                {/* Render a paragraph element: */}
-                <p className="text-white">{pinnedEvent.canisterId}</p>
                 {/* Uncomment and return your ListOfNFTTickets component if needed */}
                 <ListOfNFTTickets
                   key={pinnedEvent.canisterId}
                   userPrincipal={userPrincipalId}
                   canisterId={pinnedEvent.canisterId}
                   isMain={pinnedEvent.agentUrl}
+                  eventName={pinnedEvent.name}
                 />
               </div>
               {events ? (
-                events.map((event, index) => (
+                events.map((event) => (
                   <div key={event.data.canisterId}>
-                    {/* Render a paragraph element: */}
-                    <p className="text-white" key={index}>
-                      {event.data.canisterId}
-                    </p>
                     {/* Uncomment and return your ListOfNFTTickets component if needed */}
                     <ListOfNFTTickets
                       key={event.data.canisterId}
                       userPrincipal={userPrincipalId}
                       canisterId={event.data.canisterId}
                       isMain={""}
+                      eventName={event.data.name}
                     />
                   </div>
                 ))

@@ -3,14 +3,14 @@ import { truncateFromMiddle } from "../../../utils";
 
 const TicketItem = ({ data, canisterId }) => {
   // Use destructuring to extract key_val_data from data
-  const { key_val_data } = data;
+  const { key_val_data, tokenId } = data;
 
   return (
     <div className="max-w-sm rounded-lg overflow-hidden shadow-lg bg-white text-black m-4 p-4">
       <img src={key_val_data.LogoData} alt={key_val_data.name} />
       <div className="flex text-black/50 flex-row mt-2 text-xs justify-between items-center">
         <h3>
-          Ticket ID : <b className="text-black/80">01</b>
+          Ticket ID : <b className="text-black/80">{tokenId.toString()}</b>
         </h3>
         <h3>
           canister ID :{" "}
