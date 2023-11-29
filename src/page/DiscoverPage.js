@@ -13,6 +13,28 @@ const DiscoverPage = () => {
   const [activeTab, setActiveTab] = useState("upcoming");
   const [ready, setReady] = useState(false);
 
+  const pinnedEvent = {
+    principalId:
+      "5ib3s-r5a77-exfkc-43egg-bcvjp-ovimv-xzffi-gjepj-ggama-akpk2-hqe",
+    canisterId: "i6hws-ryaaa-aaaam-abz3a-cai",
+    canisterName: "asia_blockchain_festival",
+    agentUrl: "https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io",
+    logoType: "image/jpeg",
+    logoData:
+      "https://lime-known-rabbit-717.mypinata.cloud/ipfs/QmYTehcvp5mphmsbdJFEYCiaTWKziM9XWFaSrRRw6LeVws?_gl=1*187rub8*_ga*MTUzNjI4NDg3MS4xNzAxMTYwOTQx*_ga_5RMPXG14TE*MTcwMTE2MDk0MS4xLjEuMTcwMTE2MTEwMi4zNC4wLjA.",
+    name: "Asia Blockchan Festival",
+    description:
+      "The Asia Blockchain Festival 2024 is a premier gathering designed to bring together visionary entrepreneurs, developers, investors, and thought leaders at the forefront of the Web3 revolution. This summit aims to foster collaboration, knowledge sharing, and networking within the rapidly evolving landscape of decentralized technologies, blockchain, and cryptocurrencies.",
+    symbol: "ABF",
+    maxLimit: "300",
+    location: "Bali",
+    startDateTime: "2024-04-20T10:00",
+    endDateData: "2024-04-22T17:00",
+    isInPerson: true,
+    isFree: false,
+    price: 60,
+  };
+
   useEffect(() => {
     (async () => {
       await initJuno({
@@ -39,6 +61,7 @@ const DiscoverPage = () => {
             },
           },
         });
+        console.log(eventList.items);
         // After fetching the events, filter out past events
         const filteredEvents = eventList.items.filter((event) => {
           // Compare event's endDateData with the current time
@@ -106,6 +129,34 @@ const DiscoverPage = () => {
           </button>
         </div>
         <div className="w-full md:w-3/5  p-4 md:p-10 rounded-sm grid grid-cols-1 md:grid-cols-1 gap-4 justify-center items-center">
+          <li className="relative flex justify-center gap-4 pb-5">
+            <div
+              className={`before:absolute  before:bottom-5 before:top-[20px] before:h-full before:w-[1px] before:bg-white/20"
+              }`}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 16 20"
+                fill="#ffffff"
+                className="w-3 h-3 absolute top-[10px] left-[-5.5px]"
+              >
+                <g data-name="Layer 2">
+                  <g data-name="Layer 1">
+                    <circle cx="8" cy="8" r="8" />
+                  </g>
+                </g>
+              </svg>
+            </div>
+            <div className="w-full">
+              <div className="flex flex-row mb-2">
+                <h3 className="text-lg text-white font-semibold">
+                  Pinned Event
+                </h3>
+              </div>
+
+              <EventItem event={pinnedEvent} />
+            </div>
+          </li>
           {events ? (
             activeTab === "upcoming" ? (
               <ul>

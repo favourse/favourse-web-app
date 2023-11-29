@@ -4,12 +4,10 @@ import { truncateFromMiddle } from "../../../utils";
 const TicketItem = ({ data, canisterId }) => {
   // Use destructuring to extract key_val_data from data
   const { key_val_data } = data;
-  console.log(key_val_data.LogoData);
 
   return (
     <div className="max-w-sm rounded-lg overflow-hidden shadow-lg bg-white text-black m-4 p-4">
       <img src={key_val_data.LogoData} alt={key_val_data.name} />
-      <object data={key_val_data.LogoData}></object>
       <div className="flex text-black/50 flex-row mt-2 text-xs justify-between items-center">
         <h3>
           Ticket ID : <b className="text-black/80">01</b>

@@ -18,8 +18,10 @@ const EventItem = ({ event }) => {
   // This function handles the click event on an event item
   const handleEventClick = () => {
     // 768px is a common breakpoint for desktop vs mobile
-    if (window.innerWidth > 768) {
+    if (event.agentUrl === "https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io") {
       // For Desktop, open the modal
+      setIsModalOpen(true);
+    } else if (window.innerWidth > 768) {
       setIsModalOpen(true);
     } else {
       // For Mobile, redirect to the event details page

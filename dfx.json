@@ -1,0 +1,30 @@
+{
+  "canisters": {
+    "favourse_frontend": {
+      "type": "assets",
+      "source": ["build"],
+      "http_headers": {
+        "cache-control": "max-age=3600"
+      },
+      "entrypoint": "build/index.html"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "dfx": "0.15.1",
+  "networks": {
+    "local": {
+      "bind": "127.0.0.1:8000",
+      "type": "ephemeral"
+    },
+    "ic": {
+      "providers": ["https://ic0.app"],
+      "type": "persistent"
+    }
+  },
+  "version": 1
+}

@@ -16,6 +16,7 @@ export default function ModalRegistrationSection({ event }) {
   const [isLogin, setIsLogin] = useState(false);
   const [isSuccess, setIsSucces] = useState("minting");
   const [user, setUser] = useState(null);
+  const [ticketsLeft, setTicketsLeft] = useState(BigInt(0));
 
   useEffect(() => {
     const checkIfAuthenticated = async () => {
@@ -40,11 +41,41 @@ export default function ModalRegistrationSection({ event }) {
     });
   };
 
+  useEffect(() => {
+    const dip721NFTActor = Actor.createActor(dip721IdlFactory, {
+      agent: new HttpAgent({
+        host:
+          event.agentUrl === "https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io"
+            ? "https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io"
+            : process.env.REACT_APP_LOCAL_NETWORK,
+      }), // Adjust the host if necessary
+      canisterId: event.canisterId,
+    });
+
+    Promise.all([
+      dip721NFTActor.totalSupplyDip721(),
+      dip721NFTActor.getMaxLimitDip721(),
+    ])
+      .then(([supply, limit]) => {
+        setTicketsLeft(BigInt(limit) - BigInt(supply));
+        // console.log(ticketsLeft); // Calculate tickets left
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     const principal = Principal.fromText(user);
-    const agent = new HttpAgent({ host: process.env.REACT_APP_LOCAL_NETWORK }); // Change to your network host
+
+    const agent = new HttpAgent({
+      host:
+        event.agentUrl === "https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io"
+          ? "https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io"
+          : process.env.REACT_APP_LOCAL_NETWORK,
+    }); // Change to your network host
     agent.fetchRootKey().catch((err) => {
       console.warn(
         "Unable to fetch root key. Check your network connectivity.",
@@ -72,7 +103,7 @@ export default function ModalRegistrationSection({ event }) {
     try {
       const dip721Actor = Actor.createActor(dip721IdlFactory, {
         agent,
-        canisterId: event.canisterId, // Replace with your canister ID
+        canisterId: event.canisterId,
       });
       const mintReceipt = await dip721Actor.mintDip721(
         principal, // The recipient's principal ID
@@ -131,35 +162,48 @@ export default function ModalRegistrationSection({ event }) {
         </div>
         Registration
       </div>
-      <div className="px-6 py-3 bg-white/20 mx-1 my-1 rounded-md flex flex-row items-center">
-        <div className="w-10 h-10 mr-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 48 60"
-            x="0px"
-            y="0px"
-            fill="#ffffff"
-          >
-            <g data-name="Livello 2">
-              <g>
-                <rect class="cls-1" />
-                <path d="M24,11.5A13.5,13.5,0,1,1,10.5,25,13.52,13.52,0,0,1,24,11.5M24,10A15,15,0,1,0,39,25,15,15,0,0,0,24,10Z" />
-                <path d="M8.11,15.64a.73.73,0,0,1-.53-.22.74.74,0,0,1,0-1.06l5.89-5.89a.75.75,0,0,1,1.06,1.06L8.64,15.42A.74.74,0,0,1,8.11,15.64Z" />
-                <path d="M11.05,12.7a.79.79,0,0,1-.53-.22L9.09,11.05a.75.75,0,0,1,0-1.06.74.74,0,0,1,1.06,0l1.43,1.43a.74.74,0,0,1,0,1.06A.75.75,0,0,1,11.05,12.7Z" />
-                <path d="M39.89,15.64a.74.74,0,0,1-.53-.22L33.47,9.53a.75.75,0,0,1,1.06-1.06l5.89,5.89a.74.74,0,0,1,0,1.06A.73.73,0,0,1,39.89,15.64Z" />
-                <path d="M37,12.7a.75.75,0,0,1-.53-.22.74.74,0,0,1,0-1.06L37.85,10a.74.74,0,0,1,1.06,0,.75.75,0,0,1,0,1.06l-1.43,1.43A.79.79,0,0,1,37,12.7Z" />
-                <path d="M29.78,31.53a.74.74,0,0,1-.53-.22l-5.78-5.78a.75.75,0,0,1-.22-.53V16.72a.75.75,0,0,1,1.5,0v8l5.56,5.56a.74.74,0,0,1,0,1.06A.71.71,0,0,1,29.78,31.53Z" />
-              </g>
-            </g>
-          </svg>
-        </div>
-        <div>
-          <div className="text-md font-semibold">Limited Spots Remaining</div>
-          <div className="text-xs font-light">
-            Hurry up and register before the event fills up!
+      {ticketsLeft <= 10 ? (
+        ticketsLeft < 0 ? (
+          <></>
+        ) : (
+          <div className="px-6 py-3 bg-white/20 mx-1 my-1 rounded-md flex flex-row items-center">
+            <>
+              <div className="w-10 h-10 mr-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 48 60"
+                  x="0px"
+                  y="0px"
+                  fill="#ffffff"
+                >
+                  <g data-name="Livello 2">
+                    <g>
+                      <rect class="cls-1" />
+                      <path d="M24,11.5A13.5,13.5,0,1,1,10.5,25,13.52,13.52,0,0,1,24,11.5M24,10A15,15,0,1,0,39,25,15,15,0,0,0,24,10Z" />
+                      <path d="M8.11,15.64a.73.73,0,0,1-.53-.22.74.74,0,0,1,0-1.06l5.89-5.89a.75.75,0,0,1,1.06,1.06L8.64,15.42A.74.74,0,0,1,8.11,15.64Z" />
+                      <path d="M11.05,12.7a.79.79,0,0,1-.53-.22L9.09,11.05a.75.75,0,0,1,0-1.06.74.74,0,0,1,1.06,0l1.43,1.43a.74.74,0,0,1,0,1.06A.75.75,0,0,1,11.05,12.7Z" />
+                      <path d="M39.89,15.64a.74.74,0,0,1-.53-.22L33.47,9.53a.75.75,0,0,1,1.06-1.06l5.89,5.89a.74.74,0,0,1,0,1.06A.73.73,0,0,1,39.89,15.64Z" />
+                      <path d="M37,12.7a.75.75,0,0,1-.53-.22.74.74,0,0,1,0-1.06L37.85,10a.74.74,0,0,1,1.06,0,.75.75,0,0,1,0,1.06l-1.43,1.43A.79.79,0,0,1,37,12.7Z" />
+                      <path d="M29.78,31.53a.74.74,0,0,1-.53-.22l-5.78-5.78a.75.75,0,0,1-.22-.53V16.72a.75.75,0,0,1,1.5,0v8l5.56,5.56a.74.74,0,0,1,0,1.06A.71.71,0,0,1,29.78,31.53Z" />
+                    </g>
+                  </g>
+                </svg>
+              </div>
+
+              <div>
+                <div className="text-md font-semibold">
+                  Limited Spots Remaining
+                </div>
+                <div className="text-xs font-light">
+                  Hurry up and register before the event fills up!
+                </div>
+              </div>
+            </>
           </div>
-        </div>
-      </div>
+        )
+      ) : (
+        <></>
+      )}
 
       {/* Ticket Price */}
       {event.isFree ? (
@@ -168,15 +212,25 @@ export default function ModalRegistrationSection({ event }) {
             Hello! To join the event, please register below.
           </p>
           {user ? (
-            <button
-              onClick={handleSubmit}
-              className="w-full rounded-md bg-white text-black py-[8px] text-sm font-semibold mt-5 mb-2"
-            >
-              {isLoading
-                ? "Mint NFT"
-                : isSuccess === "success"
-                ? "Success Mint NFT"
-                : "Get Ticket"}
+            ticketsLeft <= 0 ? (
+              <button className="w-full rounded-md bg-black/30 text-white/50 py-[8px] text-sm font-semibold mt-5 mb-2">
+                Sold Out
+              </button>
+            ) : (
+              <button
+                onClick={handleSubmit}
+                className="w-full rounded-md bg-white text-black py-[8px] text-sm font-semibold mt-5 mb-2"
+              >
+                {isLoading
+                  ? "Mint NFT"
+                  : isSuccess === "success"
+                  ? "Success Mint NFT"
+                  : "Get Ticket"}
+              </button>
+            )
+          ) : ticketsLeft <= 0 ? (
+            <button className="w-full rounded-md bg-black/30 text-white/50 py-[8px] text-sm font-semibold mt-5 mb-2">
+              Sold Out
             </button>
           ) : (
             <button
@@ -196,15 +250,25 @@ export default function ModalRegistrationSection({ event }) {
             your ticket below.
           </p>
           {user ? (
-            <button
-              onClick={handleSubmit}
-              className="w-full rounded-md bg-white text-black py-[8px] text-sm font-semibold mt-5 mb-2"
-            >
-              {isLoading
-                ? "Mint NFT"
-                : isSuccess === "success"
-                ? "Success Mint NFT"
-                : "Get Ticket"}
+            ticketsLeft <= 0 ? (
+              <button className="w-full rounded-md bg-black/30 text-white/50 py-[8px] text-sm font-semibold mt-5 mb-2">
+                Sold Out
+              </button>
+            ) : (
+              <button
+                onClick={handleSubmit}
+                className="w-full rounded-md bg-white text-black py-[8px] text-sm font-semibold mt-5 mb-2"
+              >
+                {isLoading
+                  ? "Mint NFT"
+                  : isSuccess === "success"
+                  ? "Success Mint NFT"
+                  : "Get Ticket"}
+              </button>
+            )
+          ) : ticketsLeft <= 0 ? (
+            <button className="w-full rounded-md bg-black/30 text-white/50 py-[8px] text-sm font-semibold mt-5 mb-2">
+              Sold Out
             </button>
           ) : (
             <button

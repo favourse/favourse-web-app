@@ -6,13 +6,16 @@ import TicketItem from "./component/TicketItem";
 
 // const dip721NFTCanisterId = process.env.REACT_APP_CANISTER_ID;
 
-const agent = new HttpAgent({
-  host: process.env.REACT_APP_LOCAL_NETWORK,
-});
-
-const ListOfNFTTickets = ({ userPrincipal, canisterId }) => {
+const ListOfNFTTickets = ({ userPrincipal, canisterId, isMain }) => {
   const [nfts, setNfts] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const agent = new HttpAgent({
+    host:
+      isMain === "https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io"
+        ? "https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io"
+        : process.env.REACT_APP_LOCAL_NETWORK,
+  });
 
   useEffect(() => {
     const fetchNFTs = async () => {

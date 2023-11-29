@@ -3,9 +3,9 @@ import { Helmet } from "react-helmet";
 import * as AuthService from "../auth/AuthService";
 
 import HeaderSection from "../component/HeaderSection";
-import TicketNFTComponent from "../component/ticket/TicketNFTComponent";
+// import TicketNFTComponent from "../component/ticket/TicketNFTComponent";
 import ListOfNFTTickets from "../component/ticket/ListOfNFTTickets";
-import { truncateFromMiddle } from "../utils";
+// import { truncateFromMiddle } from "../utils";
 import { initJuno, listDocs } from "@junobuild/core";
 
 export default function MyTicketNFT() {
@@ -68,6 +68,11 @@ export default function MyTicketNFT() {
     checkIfAuthenticated();
   }, []);
 
+  const pinnedEvent = {
+    canisterId: "i6hws-ryaaa-aaaam-abz3a-cai",
+    agentUrl: "https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io",
+  };
+
   const handleLogin = async () => {
     console.log("clicked");
     await AuthService.login(() => {
@@ -103,6 +108,17 @@ export default function MyTicketNFT() {
             <div className="w-full md:w-4/5 mt-3 p-4 md:p-10 rounded-sm grid grid-cols-1 md:grid-cols-1 gap-4 justify-center items-center">
               {/* {user ? <div>tes</div> : <TicketNFTComponent principalId={user} />} */}
               {/* <TicketNFTComponent /> */}
+              <div key={pinnedEvent.canisterId}>
+                {/* Render a paragraph element: */}
+                <p className="text-white">{pinnedEvent.canisterId}</p>
+                {/* Uncomment and return your ListOfNFTTickets component if needed */}
+                <ListOfNFTTickets
+                  key={pinnedEvent.canisterId}
+                  userPrincipal={userPrincipalId}
+                  canisterId={pinnedEvent.canisterId}
+                  isMain={pinnedEvent.agentUrl}
+                />
+              </div>
               {events ? (
                 events.map((event, index) => (
                   <div key={event.data.canisterId}>
@@ -115,6 +131,7 @@ export default function MyTicketNFT() {
                       key={event.data.canisterId}
                       userPrincipal={userPrincipalId}
                       canisterId={event.data.canisterId}
+                      isMain={""}
                     />
                   </div>
                 ))
