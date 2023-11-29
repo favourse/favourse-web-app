@@ -14,7 +14,7 @@ import {
 } from "../component/event";
 import HeaderSection from "../component/HeaderSection";
 import DeployModal from "../component/event/component/DeployModal";
-import { LIVE_API_URL } from "../utils";
+import { LOCAL_API_URL } from "../utils";
 // import { API_URL, validateFormData } from "../utils";
 
 // const ethers = require("ethers");
@@ -145,7 +145,7 @@ const CreateEventPage = () => {
     }, 1000);
     e.preventDefault();
     try {
-      const response = await axios.post(LIVE_API_URL + "/deploy", formData);
+      const response = await axios.post(LOCAL_API_URL + "/deploy", formData);
       const dataToStore = {
         principalId: response.data.principalId,
         canisterId: response.data.canisterId, // Make sure these fields are returned from the backend

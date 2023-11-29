@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import * as AuthService from "../../../auth/AuthService";
 import { useNavigate } from "react-router-dom";
+import { idlFactory as dip721IdlFactory } from "../../../service.did";
+import { Actor, HttpAgent } from "@dfinity/agent";
+import { Principal } from "@dfinity/principal";
 
 import { numberWithCommas } from "../../../utils/utils";
-import { LIVE_API_URL } from "../../../utils";
-import axios from "axios";
 import DeployModal from "./DeployModal";
 import FavIcon from "../../../assets/fav-icon.png";
 
@@ -21,22 +22,13 @@ export default function ModalRegistrationSection({ event }) {
       const isAuthenticated = await AuthService.isAuthenticated();
       if (isAuthenticated) {
         const principalUserId = await AuthService.getPrincipalId();
-        setUser({ principalUserId });
+        setUser(principalUserId);
       }
     };
 
     checkIfAuthenticated();
   }, []);
 
-  // const handleSubmit = (e) => {
-  //   setIsLoading(true);
-  //   setTimeout(() => {
-  //     setIsSucces("success");
-  //     setTimeout(() => {
-  //       navigate("/my-ticket");
-  //     }, 2000);
-  //   }, 3000);
-  // };
   const popupLogin = (e) => {
     setIsLogin(true);
   };
@@ -49,40 +41,66 @@ export default function ModalRegistrationSection({ event }) {
   };
 
   const handleSubmit = async (e) => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsSucces("minting");
-    }, 1000);
     e.preventDefault();
-    try {
-      const mintData = {
-        principalId: event.principalId,
-        canisterName: event.canisterName,
-        canisterId: EventTarget.canisterId,
-        logoData: event.logoData,
-        name: event.name,
-        location: event.location,
-        startDateTime: event.startDateTime,
-        endDateData: event.endDateData,
-        principalReceiver: user.principalUserId,
-      };
-      const response = await axios.post(LIVE_API_URL + "/mint-nft", mintData);
+    setIsLoading(true);
+    const principal = Principal.fromText(user);
+    const agent = new HttpAgent({ host: process.env.REACT_APP_LOCAL_NETWORK }); // Change to your network host
+    agent.fetchRootKey().catch((err) => {
+      console.warn(
+        "Unable to fetch root key. Check your network connectivity.",
+        err
+      );
+    });
 
+    const textEncoder = new TextEncoder();
+    const dataAsUint8Array = textEncoder.encode(event.name);
+
+    const metadataDesc = [
+      {
+        purpose: { Rendered: null },
+        data: Array.from(dataAsUint8Array), // Convert string to binary blob
+        key_val_data: [
+          { key: "startDateTime", val: { TextContent: event.startDateTime } },
+          { key: "endDateTime", val: { TextContent: event.startDateTime } },
+          { key: "location", val: { TextContent: event.location } },
+          { key: "LogoData", val: { TextContent: event.logoData } },
+          { key: "name", val: { TextContent: event.name } },
+        ],
+      },
+    ];
+
+    try {
+      const dip721Actor = Actor.createActor(dip721IdlFactory, {
+        agent,
+        canisterId: event.canisterId, // Replace with your canister ID
+      });
+      const mintReceipt = await dip721Actor.mintDip721(
+        principal, // The recipient's principal ID
+        metadataDesc
+      );
+
+      // Handle the response from the minting function
+      console.log(mintReceipt);
       setIsSucces("success");
       setTimeout(() => {
         navigate("/my-ticket");
       }, 2000);
     } catch (error) {
+      if (error instanceof Error && error.name === "CertificateError") {
+        console.error("Certificate verification failed. Retrying...");
+        // Implement retry logic here
+      } else {
+        console.error("An unexpected error occurred:", error);
+      }
+      console.error("Minting failed", error);
+      setIsSucces("error");
+    } finally {
       setTimeout(() => {
-        setIsSucces("error");
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 2000);
+        setIsLoading(false);
       }, 2000);
-      // setDeploymentResult(error.message);
-      console.log(error.message);
     }
   };
+
   return (
     <div className="w-full h-fit bg-zinc-800 rounded-md">
       <div className="border-b-[1px] border-white/10 py-2 px-6 flex flex-row items-center font-semibold text-lg">
